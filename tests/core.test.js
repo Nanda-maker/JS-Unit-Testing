@@ -1,5 +1,5 @@
 import { it, expect, describe } from "vitest";
-import { calculateDiscount, getCoupons } from "../src/core";
+import { calculateDiscount, getCoupons, validateUserInput } from "../src/core";
 
 describe("test", () => {
   it("test", () => {
@@ -98,5 +98,29 @@ describe("calculateDiscount", () => {
   });
   it("should handle the non-string discount code", () => {
     expect(calculateDiscount(100, 100)).toMatch(/invalid/i);
+  });
+});
+
+describe("validateUserInput", () => {
+  it("should return success if given valid inputs", () => {
+    expect(validateUserInput("nanda", 40)).toMatch(/successful/i);
+  });
+  it("should return error for invalid username", () => {
+    expect(validateUserInput("na", 40)).toMatch(/invalid username/i);
+  });
+  it("should return error for invalid less age", () => {
+    expect(validateUserInput("nanda", 17)).toMatch(/invalid age/i);
+  });
+  it("should return error for invalid not a number age", () => {
+    expect(validateUserInput("nanda", "17")).toMatch(/invalid age/i);
+  });
+  it("should return error if the age greater than 100", () => {
+    expect(validateUserInput("nanda", 101)).toMatch(/invalid age/i);
+  });
+  it("should return an error if username is longer than 256 characters", () => {
+    expect(validateUserInput("a".repeat(256), 40)).toMatch(/invalid username/i);
+  });
+  it("should return an error if both username and age are invalid", () => {
+    expect(validateUserInput("", 0)).toMatch(/invalid username, invalid age/i);
   });
 });
