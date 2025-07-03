@@ -3,6 +3,7 @@ import {
   calculateDiscount,
   getCoupons,
   isPriceInRange,
+  isValidUsername,
   validateUserInput,
 } from "../src/core";
 
@@ -141,5 +142,29 @@ describe("isPriceInRange", () => {
   });
   it("should return true when price is within the range", () => {
     expect(isPriceInRange(50, 0, 100)).toBe(true);
+  });
+});
+
+describe("isValidUsername", () => {
+  const minLength = 5;
+  const maxLength = 15;
+  it("should return false if username is too short", () => {
+    expect(isValidUsername("a".repeat(minLength - 1))).toBe(false);
+  });
+  it("should return false if username is too long", () => {
+    expect(isValidUsername("a".repeat(maxLength + 1))).toBe(false);
+  });
+  it("should return true if username is at the min or max", () => {
+    expect(isValidUsername("a".repeat(minLength))).toBe(true);
+    expect(isValidUsername("a".repeat(maxLength))).toBe(true);
+  });
+  it("should return true if username is within the length limits", () => {
+    expect(isValidUsername("a".repeat(minLength + 1))).toBe(true);
+    expect(isValidUsername("a".repeat(maxLength - 1))).toBe(true);
+  });
+  it("should return false for invalid input types", () => {
+    expect(isValidUsername(123)).toBe(false);
+    expect(isValidUsername(null)).toBe(false);
+    expect(isValidUsername(undefined)).toBe(false);
   });
 });
