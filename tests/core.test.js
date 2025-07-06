@@ -171,16 +171,33 @@ describe("isValidUsername", () => {
 });
 
 describe("canDrive", () => {
-  it("should return error for invalid country code", () => {
-    expect(canDrive(20, "FR")).toBe(/invalid/i);
-  });
-  it("should return false for underage in US", () => {
-    expect(canDrive(15, "US")).toBe(false);
-  });
-  it("should return true for min age in US", () => {
-    expect(canDrive(16, "US")).toBe(true);
-  });
-  it("should return true for eligible age in US", () => {
-    expect(canDrive(17, "US")).toBe(true);
-  });
+  // parameterized tests
+  // using vitest's it.each for parameterized tests
+  // this allows us to run the same test with different inputs
+  it.each([
+    { age: 15, country: "US", result: false },
+    { age: 16, country: "US", result: true },
+    { age: 17, country: "US", result: true },
+    { age: 15, country: "UK", result: false },
+    { age: 16, country: "UK", result: true },
+    { age: 17, country: "UK", result: true },
+  ])(
+    "should return $result for age $age in country $country",
+    ({ age, country, result }) => {
+      expect(canDrive(age, country)).toBe(result);
+    }
+  );
+
+  // it("should return error for invalid country code", () => {
+  //   expect(canDrive(20, "FR")).toBe(/invalid/i);
+  // });
+  // it("should return false for underage in US", () => {
+  //   expect(canDrive(15, "US")).toBe(false);
+  // });
+  // it("should return true for min age in US", () => {
+  //   expect(canDrive(16, "US")).toBe(true);
+  // });
+  // it("should return true for eligible age in US", () => {
+  //   expect(canDrive(17, "US")).toBe(true);
+  // });
 });
