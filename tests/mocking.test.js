@@ -1,10 +1,19 @@
 import { vi, it, expect, describe } from "vitest";
-import { getPriceInCurrency, getShippingInfo } from "../src/mocking";
+import {
+  getPriceInCurrency,
+  getShippingInfo,
+  renderPage,
+  submitOrder,
+} from "../src/mocking";
 import { getExchangeRate } from "../src/libs/currency";
 import { getShippingQuote } from "../src/libs/shipping";
+import { trackPageView } from "../src/libs/analytics";
+import { charge } from "../src/libs/payment";
 
 vi.mock("../src/libs/currency");
 vi.mock("../src/libs/shipping");
+vi.mock("../src/libs/analytics");
+vi.mock("../src/libs/payment.js");
 describe("test suite", () => {
   it("test suite", () => {
     const greet = vi.fn();
@@ -58,5 +67,36 @@ describe("getShippingInfo", () => {
     expect(info).toMatch("$50");
     expect(info).toMatch(/5 days/i);
     expect(info).toMatch(/Shipping cost: \$50 \(5 days\)/i);
+  });
+});
+
+describe("renderPage", () => {
+  it("should return correct content", async () => {
+    const result = await renderPage();
+    expect(result).toMatch(/content/i);
+  });
+  it("should call analytics tracking", async () => {
+    await renderPage();
+    expect(trackPageView).toHaveBeenCalledWith("/home");
+  });
+});
+
+describe("submitOrder", () => {
+  const order = { totalAmount: 100 };
+  const creditCard = { creditCardNumber: "1234" };
+  it("should charge the customer", async () => {
+    vi.mocked(charge).mockResolvedValue({ status: "success" });
+    const result = await submitOrder(order, creditCard);
+    expect(charge).toHaveBeenCalledWith(creditCard, order.totalAmount);
+  });
+  it("should return success if payment is successful", async () => {
+    vi.mocked(charge).mockResolvedValue({ status: "success" });
+    const result = await submitOrder(order, creditCard);
+    expect(result).toEqual({ success: true });
+  });
+  it("should return success if payment is successful", async () => {
+    vi.mocked(charge).mockResolvedValue({ status: "failed" });
+    const result = await submitOrder(order, creditCard);
+    expect(result).toEqual({ success: false, error: "payment_error" });
   });
 });
