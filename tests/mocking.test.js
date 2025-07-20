@@ -114,6 +114,12 @@ describe('submitOrder', () => {
 
 describe('signUp', () => {
   const email = 'email@example.com';
+  // beforeEach(() => {
+  //   vi.mocked(sendEmail).mockClear(); // Clear the mock before each test
+  // });
+  // beforeEach(() => {
+  //   vi.clearAllMocks();
+  // });
   it('should return false for invalid email', async () => {
     const result = await signUp('invalid-email');
     expect(result).toBe(false);
@@ -123,7 +129,8 @@ describe('signUp', () => {
     expect(result).toBe(true);
   });
   it('should send a welcome email for valid email', async () => {
-    expect(sendEmail).toHaveBeenCalled();
+    await signUp(email);
+    expect(sendEmail).toHaveBeenCalledOnce();
     const args = vi.mocked(sendEmail).mock.calls[0];
     expect(args[0]).toBe(email);
     expect(args[1]).toMatch(/welcome/i);
