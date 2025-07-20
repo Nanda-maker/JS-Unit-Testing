@@ -5,7 +5,7 @@ import { charge } from './libs/payment';
 import security from './libs/security';
 import { getShippingQuote } from './libs/shipping';
 
-// Lesson: Mocking modules
+// Mocking modules
 export function getPriceInCurrency(price, currency) {
   const rate = getExchangeRate('USD', currency);
   return price * rate;
@@ -18,7 +18,7 @@ export function getShippingInfo(destination) {
   return `Shipping Cost: $${quote.cost} (${quote.estimatedDays} Days)`;
 }
 
-// Lesson: Interaction testing
+// Interaction testing
 export async function renderPage() {
   trackPageView('/home');
 
@@ -35,7 +35,7 @@ export async function submitOrder(order, creditCard) {
   return { success: true };
 }
 
-// Lesson: Partial mocking
+//Partial mocking
 export async function signUp(email) {
   if (!isValidEmail(email)) return false;
 
@@ -44,14 +44,14 @@ export async function signUp(email) {
   return true;
 }
 
-// Lesson: Spying on functions
+// Spying on functions
 export async function login(email) {
   const code = security.generateCode();
 
   await sendEmail(email, code.toString());
 }
 
-// Lesson: Mocking dates
+// Mocking dates
 export function isOnline() {
   const availableHours = [8, 20];
   const [open, close] = availableHours;
